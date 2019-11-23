@@ -3,11 +3,11 @@ import scrapy
 import re
 import json
 from JobSpider_lago.items import JobspiderLagoItem
-from scrapy_redis.spiders import RedisSpider
 
 
 class LagospiderSpider(scrapy.Spider):
     name = 'LagoSpider'
+
     # allowed_domains = ['www.lagou.com']
 
     def start_requests(self):
@@ -25,6 +25,7 @@ class LagospiderSpider(scrapy.Spider):
         )
 
     def get_listJob(self, response):
+        # 获取总页数
         totalNum = int(re.findall(r'<span class="span totalNum">(.*?)</span>', response.text, re.S)[0])
 
         jobDataUrl = 'https://www.lagou.com/jobs/positionAjax.json?needAddtionalResult=false'
@@ -33,10 +34,11 @@ class LagospiderSpider(scrapy.Spider):
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
         }
 
-        for i in range(0, totalNum):
+        # 获取每一页岗位的json数据
+        for i in range(1, totalNum+1):
             data = {
                 'first': 'false',
-                'pn': str(i + 1),
+                'pn': str(i),
                 'kd': '大数据',
                 'sid': '16c6a03fbc0c4db48dbb3eecff390220'
             }
@@ -56,6 +58,8 @@ class LagospiderSpider(scrapy.Spider):
         sid = response.meta['sid']
         jsonJobData = json.loads(response.text)
         result = jsonJobData['content']['positionResult']['result']
+
+        # 发送需要的job信息
         for job in result:
             positionId = job['positionId']
             url = 'https://www.lagou.com/jobs/{}.html?show=79a9491071e94813ae6e954c7e7ea77e'.format(positionId)
@@ -70,6 +74,7 @@ class LagospiderSpider(scrapy.Spider):
                 callback=self.parse
             )
 
+    # 将获取的信息发送给pipeline
     def parse(self, response):
         keyword = response.meta['keyword']
         item = JobspiderLagoItem()
@@ -91,7 +96,10 @@ class LagospiderSpider(scrapy.Spider):
         jobData['第三工作分类'] = job['thirdType']
         jobData['工作年限要求'] = job['workYear']
 
+
         item['keyword'] = keyword
         item['jobData'] = jobData
 
+        # 设置需要保存在哪里
+        item['pipelineType'] = 'json'
         yield item

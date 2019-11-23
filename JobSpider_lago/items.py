@@ -10,5 +10,6 @@ import scrapy
 
 class JobspiderLagoItem(scrapy.Item):
     # define the fields for your item here like:
+    pipelineType = scrapy.Field()
     keyword = scrapy.Field()
     jobData = scrapy.Field()

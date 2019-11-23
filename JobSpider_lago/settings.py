@@ -1,50 +1,46 @@
 # -*- coding: utf-8 -*-
 
 # Scrapy settings for JobSpider_lago project
-#
-# For simplicity, this file contains only settings considered important or
-# commonly used. You can find more settings consulting the documentation:
-#
-#     https://doc.scrapy.org/en/latest/topics/settings.html
-#     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
-#     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
+# 爬虫项目名
 BOT_NAME = 'JobSpider_lago'
 
+# 需要运行的爬虫的目录路径
 SPIDER_MODULES = ['JobSpider_lago.spiders']
 NEWSPIDER_MODULE = 'JobSpider_lago.spiders'
 
+# 设置打印爬虫运行时打印的LOG等级
 LOG_LEVEL = 'DEBUG'
 
-# Crawl responsibly by identifying yourself (and your website) on the user-agent
+# 运行爬虫时使用的USER-AGENT
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36'
 
-# Obey robots.txt rules
+# 是否遵循robots协议
 ROBOTSTXT_OBEY = False
 
-# MYSQL INFO
+# 连接MySQL的配置信息
 MYSQLHOST = 'localhost'
 MYSQLUSER = 'root'
 MYSQLPASSWORD = '123456'
 MYSQLDATABASE = 'testdb'
 MYSQLPORT = 3306
 
-# Redis INFO
-REDIS_URL = 'redis://localhost:6379'
-# REDIS_HOST = 'localhost'
-# REDIS_POST = '6379'
-# redis的去重类
-DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
-# redis使用的调度器
-SCHEDULER = "scrapy_redis.scheduler.Scheduler"
-# 调度器保留请求过的url（增量式爬虫，断点续爬）
-SCHEDULER_PERSIST = True
-# 设置 redis 编码方法
-REDIS_ENCODING = 'utf-8'
-# redis 密码
-# REDIS_PARAMS = {'password':'123456'}
+# 连接Redis的配置信息
+# REDIS_URL = 'redis://localhost:6379'
+# # REDIS_HOST = 'localhost'
+# # REDIS_POST = '6379'
+# # redis的去重类
+# DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+# # redis使用的调度器
+# SCHEDULER = "scrapy_redis.scheduler.Scheduler"
+# # 调度器保留请求过的url（增量式爬虫，断点续爬）
+# SCHEDULER_PERSIST = True
+# # 设置 redis 编码方法
+# REDIS_ENCODING = 'utf-8'
+# # redis 密码
+# # REDIS_PARAMS = {'password':'123456'}
 
-# Configure maximum concurrent requests performed by Scrapy (default: 16)
+# 设置scrapy执行的最大并发请求 (default: 16)
 # CONCURRENT_REQUESTS = 32
 
 # Configure a delay for requests for the same website (default: 0)
@@ -90,7 +86,8 @@ REDIS_ENCODING = 'utf-8'
 ITEM_PIPELINES = {
     'JobSpider_lago.pipelines.JobspiderLagoPipelineDefault': 100,
     # 'JobSpider_lago.pipelines.JobspiderLagoPipelineMySql': 300,
-    'scrapy_redis.pipelines.RedisPipeline': 400,  # 使用Redis内置保存数据的pipline
+    'JobSpider_lago.pipelines.JobspiderLagoPipelineJson': 301,
+    # 'scrapy_redis.pipelines.RedisPipeline': 400,  # 使用Redis内置保存数据的pipline
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
